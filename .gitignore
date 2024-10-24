@@ -3,3 +3,5 @@ faiss_index/
 __pycache__
 files/
 **.DS_Store
+**.vscode
+**.pytest*
