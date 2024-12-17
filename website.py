@@ -8,7 +8,7 @@ st.caption("🚀 Chat easily with your PDF documents")
 
 # Upload PDF
 uploaded_files = st.sidebar.file_uploader(
-    label="Upload PDF files", type=["pdf"], accept_multiple_files=False
+    label="Upload PDF files", type=["pdf"], accept_multiple_files=True
 )
 
 # Query text
@@ -18,7 +18,6 @@ query_text = st.text_input(
 # Form input and query
 result = []
 with st.form('myform', clear_on_submit=True):
-    # openai_api_key = st.text_input('OpenAI API Key', type='password', disabled=not (uploaded_file and query_text))
     submitted = st.form_submit_button(
         'Submit', disabled=not (uploaded_files and query_text))
     # if submitted and openai_api_key.startswith('sk-'):
