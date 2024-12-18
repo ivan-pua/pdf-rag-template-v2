@@ -6,10 +6,25 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 
-def generate_response(query: str, uploaded_files: list):
+def generate_response(query: str, uploaded_files: list[UploadedFile]) -> tuple[str, list[str]]:
+    """
+    Generates a response to a query based on the content of uploaded PDF files.
 
+    Parameters
+    ----------
+    query : str
+        The query string for which a response is to be generated.
+    uploaded_files : list[UploadedFile]
+        A list of uploaded PDF files to be processed.
+
+    Returns
+    -------
+    tuple[str, list[str]]
+        A tuple containing the generated response string and a list of relevant document excerpts.
+    """
     load_dotenv()  # takes variables from .env file
 
     # 1. Loaded PDF
@@ -30,7 +45,7 @@ def generate_response(query: str, uploaded_files: list):
         split_documents = text_splitter.split_documents(documents=documents)
 
         all_docs.extend(split_documents)
-    
+
     print(len(all_docs))
 
     # 3. Create embeddings
@@ -62,7 +77,7 @@ def generate_response(query: str, uploaded_files: list):
         search_type="mmr",
         search_kwargs={
             'k': 5,
-            'lambda_mult': 0.75, # the closer to 0, the more diverse
+            'lambda_mult': 0.75,  # the closer to 0, the more diverse
             'fetch_k': 30
         }
     )
