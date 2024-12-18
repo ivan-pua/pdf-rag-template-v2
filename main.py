@@ -88,10 +88,6 @@ def generate_response(query: str, uploaded_files: list):
     template = (
         "Answer the question based only on the following context below."
         "Please say you don't know if you cannot find the information from the context.\n"
-        "If you see many numbers in a sentence, they are actually a table row with "
-        "space-separated values. The first word is usually the column name and the "
-        "numbers on the right are the values.\n"
-        "The header row of this table may be 1 or 2 sentences above.\n"
         "<context>\n"
         "{context}\n"
         "</context>"
