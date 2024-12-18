@@ -60,7 +60,11 @@ def generate_response(query, uploaded_files):
     # by default uses cosine similarity
     retriever = vectordb.as_retriever(
         search_type="mmr",
-        search_kwargs={'k': 6, 'lambda_mult': 0.25, 'fetch_k': 20}
+        search_kwargs={
+            'k': 6,
+            'lambda_mult': 0.75, # the closer to 0, the more diverse
+            'fetch_k': 50
+        }
     )
 
     # query = "How are companies using LLMs?"
@@ -76,7 +80,7 @@ def generate_response(query, uploaded_files):
     llm = ChatOpenAI(
         model="gpt-4o",
         temperature=0.01,
-        max_tokens=512,
+        max_tokens=1024,
         max_retries=2,
     )
 
