@@ -17,14 +17,23 @@ query_text = st.text_input(
 
 # Form input and query
 result = []
+docs = []
 with st.form('myform', clear_on_submit=True):
     submitted = st.form_submit_button(
         'Submit', disabled=not (uploaded_files and query_text))
-    # if submitted and openai_api_key.startswith('sk-'):
-    if submitted:
+    
+    if submitted is True:
         with st.spinner('Generating Answer...'):
-            response = generate_response(query_text, uploaded_files)
+            response, relevant_docs = generate_response(query_text, uploaded_files)
             result.append(response)
+            docs.extend(relevant_docs)
 
 if len(result):
-    st.info(response)
+    st.write("Answer:")
+    st.info(body=response)
+
+if len(docs):
+    st.write("Documents from database:")
+    for i, doc in enumerate(docs):
+        expander = st.expander(label=f"Document {i+1}")
+        expander.write(doc)

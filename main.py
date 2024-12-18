@@ -8,15 +8,13 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 
-def generate_response(query, uploaded_files):
+def generate_response(query: str, uploaded_files: list):
 
     load_dotenv()  # takes variables from .env file
 
     # 1. Loaded PDF
     print("1. Loading PDF files...")
     # file_path = "databricks-llm.pdf"
-    print(uploaded_files)
-
     all_docs = []
 
     # accepts multiple files
@@ -28,10 +26,12 @@ def generate_response(query, uploaded_files):
         print("\n2. Chunking documents... ")
 
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000, chunk_overlap=200)
+            chunk_size=512, chunk_overlap=20)
         split_documents = text_splitter.split_documents(documents=documents)
 
         all_docs.extend(split_documents)
+    
+    print(len(all_docs))
 
     # 3. Create embeddings
     print("\n3. Create embeddings...")
@@ -61,9 +61,9 @@ def generate_response(query, uploaded_files):
     retriever = vectordb.as_retriever(
         search_type="mmr",
         search_kwargs={
-            'k': 6,
+            'k': 5,
             'lambda_mult': 0.75, # the closer to 0, the more diverse
-            'fetch_k': 50
+            'fetch_k': 30
         }
     )
 
@@ -73,8 +73,8 @@ def generate_response(query, uploaded_files):
     # retrieve the most relevant documents
     docs = retriever.invoke(query)
 
-    context = '\n\n'.join([doc.page_content for doc in docs])
-    print(context)
+    relevant_docs = [doc.page_content for doc in docs]
+    context = '\n\n'.join(relevant_docs)
 
     # 6. Set up LLM
     llm = ChatOpenAI(
@@ -114,4 +114,4 @@ def generate_response(query, uploaded_files):
 
     print("Answer: ")
     print(result.content)
-    return result.content
+    return result.content, relevant_docs
